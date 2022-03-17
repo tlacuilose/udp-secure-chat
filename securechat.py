@@ -1,20 +1,54 @@
 from udpchat import UDPChat, UDPUser
+from ciphers import MessageCipher
 
-# Both use localhost, but could use other ip.
-# TODO: Test if other ips work.
-localhost = "127.0.0.1"
+def start_secure_chat():
+    # Both use localhost, but could use other ip.
+    # TODO: Test if other ips work.
+    localhost = "127.0.0.1"
 
-chat = UDPChat()
 
-myport = int(input("Port you are listening in: "))
-toport = int(input("Port sending to: "))
-chat.configure(UDPUser(localhost, myport), UDPUser(localhost, toport))
+    myport = int(input("Port you are listening in: "))
+    toport = int(input("Port sending to: "))
 
-while True:
-    ans = input("Send: s, Listen: l, exit: e?")
-    if ans == 's':
-        chat.enterSend(lambda text : text)
-    elif ans == 'l':
-        chat.enterListen(lambda text : text)
-    else:
-        break
+    chat = UDPChat()
+    chat.configure(UDPUser(localhost, myport), UDPUser(localhost, toport))
+
+    print("Starting a chat...")
+
+    while True:
+        ciphertype = input("Select an encryption type (AES, DES, DES3): ").upper()
+        if ciphertype in ['AES', 'DES', 'DES3']:
+            break
+
+    cipher = MessageCipher(ciphertype)
+
+    # Manage keys.
+    while True:
+        res_create = input("A key is needed.\nCreate key: c, Import key: i? ")
+        if res_create == 'c':
+            cipher.createKey()
+            exp_ans = input("Want to export the key y/n? ")
+            if exp_ans == 'y':
+                filename = input("Give me the filename to save the key: ")
+                cipher.exportKey(filename)
+            break
+        elif res_create == 'i':
+            filename = input("Give me the file name of the key: ")
+            cipher.importKey(filename)
+            break
+
+    # Starting chat.
+    while True:
+        ans = input("Send: s, Listen: l, exit: x? ")
+        if ans == 's':
+            chat.enterSend(cipher.encrypt)
+        elif ans == 'l':
+            chat.enterListen(cipher.decrypt)
+        elif ans == 'x':
+            break
+
+
+    print("Closing chat...")
+
+if __name__ == '__main__':
+    start_secure_chat()
