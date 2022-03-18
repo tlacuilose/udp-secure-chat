@@ -3,10 +3,10 @@ from ciphers import MessageCipher
 
 def start_secure_chat():
     # Both use localhost, but could use other ip.
-    # TODO: Test if other ips work.
+    # TODO: Enable other ips.
     localhost = "127.0.0.1"
 
-
+    print(f'Opening udp chat on localhost {localhost}')
     myport = int(input("Port you are listening in: "))
     toport = int(input("Port sending to: "))
 
@@ -31,11 +31,16 @@ def start_secure_chat():
             if exp_ans == 'y':
                 filename = input("Give me the filename to save the key: ")
                 cipher.exportKey(filename)
+            else:
+                print("Key was not exported.")
             break
         elif res_create == 'i':
             filename = input("Give me the file name of the key: ")
-            cipher.importKey(filename)
-            break
+            try :
+                cipher.importKey(filename)
+                break
+            except FileNotFoundError:
+                print("Key file not found.")
 
     # Starting chat.
     while True:

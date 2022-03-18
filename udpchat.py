@@ -29,7 +29,10 @@ class UDPChat():
             message = input("Your message: ")
             if message == "exit()":
                 break
-            enc_message = enc_text(message)
+            try:
+                enc_message = enc_text(message)
+            except:
+                enc_message = message
             print(f'Sending encrypted: {enc_message}')
             sock.sendto(bytes(enc_message, "utf-8"),  self.other)
 
@@ -58,8 +61,8 @@ class UDPChat():
                 ans = input()
                 if ans == 'n':
                     break
+            except ValueError:
+                print("Failed to decrypt message.")
 
         sock.close()
-
-
 
