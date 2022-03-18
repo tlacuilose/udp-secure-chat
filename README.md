@@ -1,15 +1,15 @@
-# Python UDP Chat
+# Python UDP Secure Chat
 
 Command line encrypted chat through udp sockets.
 
-- Choose ports to comunicate in localhost.
-- Choose ecryption method AES, DES, DES3.
+- Choose ports to communicate in localhost.
+- Choose encryption method AES, DES, DES3.
 - Import, export, create a key.
 - Send and receive encrypted messages.
 
 # How to install
 
-Clone the repositoy
+Clone the repository
 
 ```bash
 git clone https://github.com/tlacuilose/udp-secure-chat
@@ -40,7 +40,7 @@ python securechat.py
     - Write an integer number.
 2. The chat asks the port where messages will be sent.
     - Write an integer number.
-3. The chat asks the encrytption method.
+3. The chat asks the encryption method.
     - Write "AES", "DES", "DES3" only.
 4. A key should be created, choose to create or import a key.
     - Type 'c' to create a key. A key will be created and choose to export it or not.
@@ -52,10 +52,10 @@ python securechat.py
 5. Choose between 's' to send messages or 'l' to listen for messages.
     - Type 's' and start sending messages.
         - Type message and hit enter to send a message to the selected port.
-        - Type 'exit()' to return to previous menu.
+        - Type 'exit()' to return to the previous menu.
     - Type 'l' and start listening for messages.
         - Messages received will be shown.
         - The chat will ask to continue listening for messages.
-            - Type 'y' to coninue listening for messages and to show hold back messages.
-            - Type 'n' to stop listening and to return to previous message.
+            - Type 'y' to continue listening for messages and to show hold back messages.
+            - Type 'n' to stop listening and to return to the previous message.
     - Type 'x' to close the chat.

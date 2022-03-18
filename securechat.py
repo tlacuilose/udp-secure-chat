@@ -6,23 +6,26 @@ def start_secure_chat():
     # TODO: Enable other ips.
     localhost = "127.0.0.1"
 
+    # Ask for the port to listen and to send to.
     print(f'Opening udp chat on localhost {localhost}')
     myport = int(input("Port you are listening in: "))
     toport = int(input("Port sending to: "))
 
-    chat = UDPChat()
-    chat.configure(UDPUser(localhost, myport), UDPUser(localhost, toport))
+    # Start and configure the port with the given socket.
+    chat = UDPChat(UDPUser(localhost, myport), UDPUser(localhost, toport))
 
     print("Starting a chat...")
 
+    # Select an encryption method.
     while True:
         ciphertype = input("Select an encryption type (AES, DES, DES3): ").upper()
         if ciphertype in ['AES', 'DES', 'DES3']:
             break
 
+    # Create a  cipher with the selected encryption method.
     cipher = MessageCipher(ciphertype)
 
-    # Manage keys.
+    # Manage the keys, create, import, or export.
     while True:
         res_create = input("A key is needed.\nCreate key: c, Import key: i? ")
         if res_create == 'c':

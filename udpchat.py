@@ -1,67 +1,96 @@
 import socket
 from typing import NamedTuple, Callable
 
-# A socket with ip and port.
 class UDPUser(NamedTuple):
+    """A UDP user with ip and port
+
+    Args:
+        ip (str): The ip of the user.
+        port (int): The port of the user.
+    """
+
     ip: str
     port: int
 
-# A chat that listens and sends modified messages.
 class UDPChat():
-    def _hasConfig(self) -> bool:
-        return self.me != None and self.other != None
+    """A chat that sends messages through UDP
 
-    # Configure chat before sending or listening
-    def configure(self, me: UDPUser, other: UDPUser):
+    Allows modifying the text when listening or sending
+
+    Args:
+        me (UDPUser): This user of the chat with ip and port
+        other (UDPUser): The receiving  user of the chat with ip and port
+
+    """
+    def __init__(self, me: UDPUser, other: UDPUser):
         self.me = me
         self.other = other
 
-    # Start a send loop, enc_text encrypting the message being sent.
-    def enterSend(self, enc_text: Callable[[str], str]):
-        if not self._hasConfig:
-            print('Please configure the chat')
-            return 
+    def enterSend(self, mod_text: Callable[[str], str]):
+        """Enter sending mode, send messages through udp.
 
+        Args:
+            mod_text (Callable[[str], str]): A modifier for the text before sending it.
+
+        """
+
+        # Start socket on internet with UDP
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) 
 
+        # Start a loop to keep sending messages.
         print(f'Sending to {self.other.ip} on port {self.other.port}, type exit() to finish.')
         while True:
             message = input("Your message: ")
+
+            # Stop the loop when exit() is typed.
             if message == "exit()":
                 break
+
+            # Modify text before sending text
             try:
-                enc_message = enc_text(message)
+                modded_text = mod_text(message)
             except:
-                enc_message = message
-            print(f'Sending encrypted: {enc_message}')
-            sock.sendto(bytes(enc_message, "utf-8"),  self.other)
+                modded_text = message
+            print(f'Sending encrypted: {modded_text}')
+
+            # Send the message to the other ip and port.
+            sock.sendto(bytes(modded_text, "utf-8"),  self.other)
 
         sock.close()
 
-    # Start a listen loop, dec_text decrypts the message being received.
     def enterListen(self, dec_text: Callable[[str], str]):
-        if not self._hasConfig:
-            print('Please configure the chat')
-            return 
+        """Enter sending mode, send messages through udp.
 
+        Args:
+            mod_text (Callable[[str], str]): A modifier for the text before sending it.
+
+        """
+
+        # Start socket on internet with UDP
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) 
 
+        # Start a loop to listen to incoming messages.
         print(f'Listening in {self.me.ip} on port {self.me.port}')
         sock.bind(self.me)
+
+        # Listen on a loop with a 5 second timeout, this allows querying for continuation.
         sock.settimeout(5)
         while True:
             try:
+                # Receive messages and modify after receiving them>
                 data, _ = sock.recvfrom(1024)
                 enc_message = bytes.decode(data)
                 print(f'Received encrypted: {enc_message}')
                 message = dec_text(enc_message)
                 print(f'received message: {message}')
             except socket.timeout:
+                # After every timeout, allow stopping the listening loop.
                 print("Continue listening for messages? y/n ")
                 ans = input()
                 if ans == 'n':
                     break
             except ValueError:
+                # Alert when the modifier failed.
                 print("Failed to decrypt message.")
 
         sock.close()
