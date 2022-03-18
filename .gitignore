@@ -7,4 +7,14 @@ __pycache__/
 *.key
 !requirements.txt
 
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
 
+# Configs.
+.vim
