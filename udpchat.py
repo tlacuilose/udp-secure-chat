@@ -48,7 +48,7 @@ class UDPChat():
 
         print(f'Listening in {self.me.ip} on port {self.me.port}')
         sock.bind(self.me)
-        sock.settimeout(3)
+        sock.settimeout(5)
         while True:
             try:
                 data, _ = sock.recvfrom(1024)
@@ -57,7 +57,7 @@ class UDPChat():
                 message = dec_text(enc_message)
                 print(f'received message: {message}')
             except socket.timeout:
-                print("Continue waiting? y/n ")
+                print("Continue listening for messages? y/n ")
                 ans = input()
                 if ans == 'n':
                     break
